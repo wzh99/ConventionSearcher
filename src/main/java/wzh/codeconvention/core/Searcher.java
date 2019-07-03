@@ -52,7 +52,7 @@ public class Searcher {
     public static void main(String[] args) {
         var searcher = new Searcher();
         try {
-            // searcher.build("google.md", "google.idx");
+            searcher.build("google.md", "google.idx");
             searcher.load("google.idx");
             var result = searcher.search("try catch");
             result.forEach(System.out::println);
@@ -248,7 +248,7 @@ public class Searcher {
     }
 
     public ArrayList<SearchResult> search(String input) throws IndexNotLoadedException {
-        // Exit if indices or test is not loaded
+        // Throws exception if indices are not loaded
         if (file == null) throw new IndexNotLoadedException();
 
         // Configure pipeline
