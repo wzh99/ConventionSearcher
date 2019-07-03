@@ -13,6 +13,6 @@ class MarkdownRenderer {
     private static final HtmlRenderer renderer = HtmlRenderer.builder(options).build();
 
     public static String render(String src) {
-        return renderer.render(parser.parse(src));
+        return "<html>" + renderer.render(parser.parse(src));
     }
 }

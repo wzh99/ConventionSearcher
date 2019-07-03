@@ -291,6 +291,3 @@ class IndexFile implements Serializable {
     HashMap<String, ArrayList<ContentTag>> dict = null;
 }
 
-class IndexNotLoadedException extends Exception {
-    public IndexNotLoadedException() { super("Index file is not loaded."); }
-}
