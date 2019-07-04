@@ -260,24 +260,25 @@ public class Searcher {
         ppl.annotate(anno);
 
         // Count frequency of input keywords
-        var statMap = new HashMap<ContentTag, Integer>();
+        var statMap = new TreeMap<ContentTag, ResultStat>();
         var coreMap = anno.get(CoreAnnotations.SentencesAnnotation.class).get(0);
         for (var token : coreMap.get(CoreAnnotations.TokensAnnotation.class)) {
             var lemma = token.lemma().toLowerCase();
             if (!file.dict.containsKey(lemma)) continue;
             for (var tag : file.dict.get(lemma)) {
                 if (!statMap.containsKey(tag))
-                    statMap.put(tag, 1);
-                else
-                    statMap.replace(tag, statMap.get(tag) + 1);
+                    statMap.put(tag, new ResultStat());
+                var stat = statMap.get(tag);
+                stat.addMatchedKeyword(lemma);
+                stat.increaseMatch();
             }
         }
 
         // Convert to search result
         var result = new ArrayList<SearchResult>();
-        statMap.forEach((var tag, var count) -> result.add(new SearchResult(tag, count)));
-        result.sort(Comparator.comparing(SearchResult::getScore).reversed()
-                .thenComparing((var res) -> res.getTag().getNode().headline.length()));
+        statMap.forEach((var tag, var stat) ->
+                result.add(new SearchResult(tag, stat.numMatchedKeywords(), stat.numMatches())));
+        Collections.sort(result);
 
         return result;
     }
@@ -291,3 +292,12 @@ class IndexFile implements Serializable {
     HashMap<String, ArrayList<ContentTag>> dict = null;
 }
 
+class ResultStat {
+    private HashSet<String> keywords = new HashSet<>();
+    private int nMatches = 0;
+
+    void addMatchedKeyword(String kw) { keywords.add(kw); }
+    int numMatchedKeywords() { return keywords.size(); }
+    void increaseMatch() { nMatches++; }
+    int numMatches() { return nMatches; }
+}

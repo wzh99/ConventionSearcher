@@ -14,7 +14,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 
 public class SearcherGUI {
@@ -33,7 +32,6 @@ public class SearcherGUI {
         var fileMenu = menuBar.add(new JMenu("File"));
         var loadItem = fileMenu.add("Load...");
         var buildItem = fileMenu.add("Build...");
-        var aboutMenu = menuBar.add(new JMenu("About"));
 
         // Create search bar
         var searchPanel = new JPanel();
@@ -119,7 +117,7 @@ public class SearcherGUI {
                     errMsg = "Invalid index file";
                 }
                 if (errMsg != null) { // show error dialog box
-                    showErrorMessage(errMsg);
+                    showMessage(errMsg);
                 } else {
                     searchButton.setEnabled(true); // can search then
                 }
@@ -160,12 +158,12 @@ public class SearcherGUI {
         buildButton.addActionListener(event -> {
             var mdPath = mdField.getText();
             if (mdPath.isBlank()) {
-                showErrorMessage("Please specify path of Markdown File");
+                showMessage("Please specify path of Markdown File");
                 return;
             }
             var outDir = outField.getText();
             if (outDir.isBlank()) {
-                showErrorMessage("Please specify path of output index file.");
+                showMessage("Please specify path of output index file.");
                 return;
             }
             var nameStr = nameField.getText();
@@ -173,7 +171,7 @@ public class SearcherGUI {
             try {
                 searcher.build(mdPath, outPath);
             } catch (IOException e) {
-                showErrorMessage("Error reading Markdown file.");
+                showMessage("Error reading Markdown file.");
                 return;
             }
             searchButton.setEnabled(true);
@@ -188,6 +186,7 @@ public class SearcherGUI {
             var searchText = searchField.getText();
             if (searchText.length() == 0) return;
             try {
+                results.clear();
                 results.addAll(searcher.search(searchText));
             } catch (IndexNotLoadedException e) { // this will not occur in GUI program
                 e.printStackTrace();
@@ -226,14 +225,14 @@ public class SearcherGUI {
                     return;
                 }
                 pagePane.setText(pageStr);
-                pagePane.setSize(800, 0);
+                pagePane.setSize(700, 0);
                 pagePane.setEditable(false);
                 var pageScroll = new JScrollPane(pagePane, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
                 var pageDialog = new JDialog(frame);
                 pageDialog.setContentPane(pageScroll);
                 pageDialog.setLocationByPlatform(true);
-                pageDialog.setSize(800, 500);
+                pageDialog.setSize(700, 500);
                 pageDialog.setVisible(true);
                 pageDialog.addWindowListener(new WindowAdapter() {
                     @Override
@@ -247,11 +246,12 @@ public class SearcherGUI {
         frame.setVisible(true);
     }
 
-    private static void showErrorMessage(String message) {
-        var errDialog = new JDialog();
-        errDialog.add(new JLabel(message));
-        errDialog.setLocationByPlatform(true);
-        errDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-        errDialog.setVisible(true);
+    private static void showMessage(String message) {
+        var dialog = new JDialog();
+        dialog.setSize(300, 200);
+        dialog.add(new JLabel(message));
+        dialog.setLocationByPlatform(true);
+        dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+        dialog.setVisible(true);
     }
 }

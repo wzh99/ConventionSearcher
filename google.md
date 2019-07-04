@@ -486,7 +486,7 @@ public protected private abstract default static final transient volatile synchr
 
 `long`-valued integer literals use an uppercase `L` suffix, never lowercase (to avoid confusion with the digit `1`). For example, `3000000000L` rather than `3000000000l`.
 
-## 5 Nameing
+## 5 Naming
 
 ### 5.1 Rules common to all identifiers
 
